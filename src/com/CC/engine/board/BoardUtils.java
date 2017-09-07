@@ -16,7 +16,7 @@ public class BoardUtils {
     }
 
     public static int[] toXYCoordinates(int position) {
-        return new int[]{position / 9, position % 9};
+        return new int[]{position % 9, position / 9};
     }
 
     public static int toCoordinate(int[] XYCoordinates) {

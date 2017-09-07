@@ -4,8 +4,6 @@ import com.CC.engine.Alliance;
 import com.CC.engine.board.Board;
 import com.CC.engine.board.BoardUtils;
 import com.CC.engine.board.Move;
-import com.CC.engine.board.Move.AttackMove;
-import com.CC.engine.board.Move.MajorMove;
 import com.CC.engine.board.Tile;
 import com.google.common.collect.ImmutableList;
 
@@ -16,52 +14,46 @@ import java.util.List;
 import static java.lang.Math.abs;
 
 /**
- * Created by all4win78 on 8/31/2017.
+ * Created by all4win78 on 9/7/2017.
  */
-public class Ma extends Piece {
+public class Xiang extends Piece {
+    private final static int[] CANDIDATE_MOVES_X = {-2, -2, 2, 2};
+    private final static int[] CANDIDATE_MOVES_Y = {2, -2, 2, -2};
 
-    private final static int[] CANDIDATE_MOVES_X = {-1, -1, -2, -2, 1, 1, 2, 2};
-    private final static int[] CANDIDATE_MOVES_Y = {2, -2, 1, -1, 2, -2, 1, -1};
-
-    public Ma(final int position, final Alliance alliance) {
+    public Xiang(int position, Alliance alliance) {
         super(position, alliance);
     }
 
     @Override
-    public Collection<Move> getLegalMoves(final Board board) {
+    public Collection<Move> getLegalMoves(Board board) {
         final List<Move> legalMoves = new ArrayList<>();
         int[] currXYCoordinates = BoardUtils.toXYCoordinates(this.position);
-        // at most 8 possible moves
-        for (int i = 0; i < 8; i++) {
+        // at most 4 possible moves
+        for (int i = 0; i < 4; i++) {
             int[] nextXYCoordinates
                     = new int[]{currXYCoordinates[0] + CANDIDATE_MOVES_X[i], currXYCoordinates[1] + CANDIDATE_MOVES_Y[i]};
             if (isValidMove(currXYCoordinates, nextXYCoordinates, board)) {
                 int candidateDestination = BoardUtils.toCoordinate(nextXYCoordinates);
                 final Tile candidateDestinationTile = board.getTile(candidateDestination);
                 if (!candidateDestinationTile.isOccupied()) {
-                    legalMoves.add(new MajorMove(board, this, candidateDestination));
+                    legalMoves.add(new Move.MajorMove(board, this, candidateDestination));
                 } else {
                     final Piece pieceAtDestination = candidateDestinationTile.getPiece();
                     final Alliance pieceAlliance = pieceAtDestination.getAlliance();
                     if (this.alliance != pieceAlliance) {
-                        legalMoves.add(new AttackMove(board, this, pieceAtDestination, candidateDestination));
+                        legalMoves.add(new Move.AttackMove(board, this, pieceAtDestination, candidateDestination));
                     }
                 }
             }
         }
-
         return ImmutableList.copyOf(legalMoves);
     }
 
-    protected boolean isValidMove(final int[] currXYCoordinates, final int[] nextXYCoordinates, final Board board) {
-        int footPosition = this.position;
-        if (abs(nextXYCoordinates[0] - currXYCoordinates[0]) == 2) {
-            footPosition += (nextXYCoordinates[0] - currXYCoordinates[0]) / 2;
-        } else {
-            footPosition += (nextXYCoordinates[1] - currXYCoordinates[1]) * 9 / 2;
-        }
+    @Override
+    protected boolean isValidMove(int[] currXYCoordinates, int[] nextXYCoordinates, Board board) {
+        int footPosition = (this.position + BoardUtils.toCoordinate(nextXYCoordinates)) / 2;
         return BoardUtils.isValidCoordinate(nextXYCoordinates)
+                && (currXYCoordinates[1]-4.5) * (nextXYCoordinates[1]-4.5) > 0
                 && !board.getTile(footPosition).isOccupied();
     }
-
 }

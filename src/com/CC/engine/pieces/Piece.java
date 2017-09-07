@@ -21,6 +21,9 @@ public abstract class Piece {
 
     public abstract Collection<Move> getLegalMoves(final Board board);
 
+    protected abstract boolean isValidMove(final int[] currXYCoordinates,
+                                           final int[] nextXYCoordinates, final Board board);
+
     public Alliance getAlliance() {
         return this.alliance;
     }
