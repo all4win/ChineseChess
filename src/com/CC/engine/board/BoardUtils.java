@@ -5,6 +5,9 @@ package com.CC.engine.board;
  */
 public class BoardUtils {
 
+
+    public static final int NUM_TILES = 90;
+
     private BoardUtils() {
         throw new RuntimeException("Not allowed to instantiate");
     }
